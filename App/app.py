@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 from collections import deque
 import time
+from PIL import Image
+
 
 # Function to display a frame in Streamlit
 def display_frame(frame):
@@ -62,5 +64,6 @@ if not st.session_state.recording and st.session_state.frame_buffer:
     while True:
         for frame in list(st.session_state.frame_buffer):
             video_placeholder.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), channels="RGB")
-            status_placeholder.markdown("### Status: **Playback**")
+            status_placeholder.markdown("### Status: **Processing**")
+            #images = [Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))]
             time.sleep(0.03)  # Display at 30 FPS
