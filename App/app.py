@@ -225,6 +225,7 @@ if st.button("Start/Stop"):
 # Webcam stream handling
 video_placeholder = st.empty()
 if st.session_state.recording:
+    dc = 0
     cap = cv2.VideoCapture(0)  # Initialize webcam
     if not cap.isOpened():
         st.error("Unable to access the camera. Please check your webcam.")
@@ -275,10 +276,21 @@ if st.session_state.recording:
                 last_frames = list(st.session_state.frame_buffer)[-16:]
 
                 pred = pipeline.predict_from_buffer(last_frames)
+                
+                if pred == 1:
+                    dc += 1
+                    prediction_label = "Drowsy" 
+                    
+                if pred == 0:
+                    prediction_label = "Non-Drowsy"
+                    dc = 0
 
                 # Display the prediction
-                prediction_label = "Drowsy" if pred == 1 else "Non-Drowsy"
                 status_placeholder.markdown(f"### Status: **{prediction_label}**")
+                if dc >= 5:
+                    status_placeholder.markdown("## **You have been drowsy for the last 5 seconds. Please consider taking a break!**")
+                    video_placeholder.empty()
+                    break
             # Allow Streamlit to refresh UI
             time.sleep(0.01)  # Approx. 30 FPS
 
